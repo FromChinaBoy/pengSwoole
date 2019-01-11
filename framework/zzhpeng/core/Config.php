@@ -7,6 +7,8 @@
  */
 namespace zzhpeng\core;
 
+use framework\zzhpeng\Zzhpeng;
+
 class Config
 {
     /**
@@ -19,8 +21,8 @@ class Config
      */
     public static function load()
     {
-        $configPath = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'application' . DIRECTORY_SEPARATOR . 'config';
-        self::$configMap = require $configPath . DIRECTORY_SEPARATOR . 'default.php';
+        $configPath = Zzhpeng::$applicationPath . DS . 'config';
+        self::$configMap = require $configPath . DS . 'default.php';
     }
 
     /**
