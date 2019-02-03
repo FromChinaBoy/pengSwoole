@@ -10,6 +10,10 @@ namespace framework\zzhpeng;
 use zzhpeng\core\Config;
 use zzhpeng\core\Log;
 use zzhpeng\core\Route;
+use zzhpeng\coroutine\Coroutine;
+use zzhpeng\pool\Mysql as MysqlPool;
+
+//use Swoole;
 
 class Zzhpeng
 {
@@ -51,43 +55,71 @@ class Zzhpeng
         $http->set([
             "worker_num" => Config::get('worker_num'),
         ]);
-        $http->on('request', function ( $request, $response) {
-//          $response->end("hello, family is run");
-            //自动路由
+
+        //初始化连接池
+        $http->on('workerStart', function (\swoole_http_server $serv, int $worker_id) {
+            if (function_exists('opcache_reset')) {
+                //清除opcache 缓存，swoole模式下其实可以关闭opcache
+                \opcache_reset();
+            }
+            try {
+                $mysqlConfig = Config::get('mysql');
+                if (!empty($mysqlConfig)) {
+                    //配置了mysql, 初始化mysql连接池
+                    MysqlPool::getInstance($mysqlConfig);
+                }
+            } catch (\Exception $e) {
+                //初始化异常，关闭服务
+                print_r('mysql-');
+                print_r($e->getMessage());
+                $serv->shutdown();
+            } catch (\Throwable $throwable) {
+                //初始化异常，关闭服务
+                print_r('mysql-');
+                print_r($throwable);
+                $serv->shutdown();
+            }
+        });
+
+        //初始化http请求
+        $http->on('request', function (\swoole_http_request $request, \swoole_http_response $response) {
+            //先过滤ico
             if($request->server['path_info'] == '/favicon.ico') {
                 $response->status(404);
                 $response->end();
                 return ;
             }
 
-            $key = $request->get['keys'];
-            if($key){
-               self::$keys = $key;
-            }
+            //初始化根协程ID
+            Coroutine::setBaseId();
+            //初始化上下文
+            $context = new \zzhpeng\coroutine\Context($request, $response);
+            //存放容器pool
+            \zzhpeng\pool\Context::set($context);
+            //协程退出，自动清空 需要Swoole版本 >= 4.2.9
+            defer(function (){
+                //清空当前pool的上下文，释放资源
+                \zzhpeng\pool\Context::clear();
+            });
 
-            if ($key == 'sleep') {
-                //模拟耗时操作
-                sleep(10);
+
+            try {
+                //自动路由
+                $result = Route::dispatch($request->server['path_info']);
+                $response->end($result);
+            } catch (\Exception $e) { //程序异常
+                print_r('Exception-' . $e->getMessage());
+                Log::alert($e->getMessage(), $e->getTrace());
+                $response->end($e->getMessage());
+            } catch (\Error $e) { //程序错误，如fatal error
+                print_r($e->getMessage());
+                Log::emergency($e->getMessage(), $e->getTrace());
+                $response->status(500);
+            } catch (\Throwable $e) {  //兜底
+                print_r('Throwable-' . $e->getMessage());
+                Log::emergency($e->getMessage(), $e->getTrace());
+                $response->status(500);
             }
-            $response->end(self::$keys);
-//
-//            try {
-//                //自动路由
-//                $result = Route::dispatch($request->server['path_info']);
-//                $response->end($result);
-//            } catch (\Exception $e) { //程序异常
-//                print_r('Exception-' . $e->getMessage());
-//                Log::alert($e->getMessage(), $e->getTrace());
-//                $response->end($e->getMessage());
-//            } catch (\Error $e) { //程序错误，如fatal error
-//                print_r($e->getMessage());
-//                Log::emergency($e->getMessage(), $e->getTrace());
-//                $response->status(500);
-//            } catch (\Throwable $e) {  //兜底
-//                print_r('Throwable-' . $e->getMessage());
-//                Log::emergency($e->getMessage(), $e->getTrace());
-//                $response->status(500);
-//            }
 
         });
         $http->start();
@@ -95,10 +127,8 @@ class Zzhpeng
 
     final public static function autoLoader($class)
     {
-        //定义rootPath
-        $rootPath = dirname(dirname(__DIR__));
         //把类转为目录，eg \a\b\c => /a/b/c.php
-        $classPath = \str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
+        $classPath = \str_replace('\\', DS, $class) . '.php';
 
         //约定框架类都在framework目录下, 业务类都在application下
         $findPath = [

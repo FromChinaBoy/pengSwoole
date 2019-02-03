@@ -23,10 +23,10 @@ class Route
             $method = $maps[2];
         }
 
-        var_dump('controller');
-        var_dump($controller);
-        var_dump('method');
-        var_dump($method);
+//        var_dump('controller');
+//        var_dump($controller);
+//        var_dump('method');
+//        var_dump($method);
         $controllerClass = "controller\\{$controller}";
         $class = new $controllerClass;
 
