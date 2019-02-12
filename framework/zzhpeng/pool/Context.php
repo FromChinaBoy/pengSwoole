@@ -7,24 +7,27 @@
  */
 namespace zzhpeng\pool;
 
+use zzhpeng\core\Singleton;
 use zzhpeng\coroutine\Coroutine;
 
 class Context
 {
+    use Singleton;
     /**
      * @var array context pool
      */
-    public static $pool = [];
+    private $pool = [];
+
 
     /**
-     * @return \Family\coroutine\Context
+     * @return \zzhpeng\coroutine\Context
      * @desc 可以任意协程获取到context
      */
-    public static function getContext()
+    public function get()
     {
         $id = Coroutine::getPid();
-        if (isset(self::$pool[$id])) {
-            return self::$pool[$id];
+        if (isset($this->pool[$id])) {
+            return $this->pool[$id];
         }
 
         return null;
@@ -33,11 +36,11 @@ class Context
     /**
      * @desc 清除context
      */
-    public static function clear()
+    public function clear()
     {
         $id = Coroutine::getPid();
-        if (isset(self::$pool[$id])) {
-            unset(self::$pool[$id]);
+        if (isset($this->pool[$id])) {
+            unset($this->pool[$id]);
         }
     }
 
@@ -45,9 +48,14 @@ class Context
      * @param $context
      * @desc 设置context
      */
-    public static function set($context)
+    public function set($context)
     {
         $id = Coroutine::getPid();
-        self::$pool[$id] = $context;
+        $this->pool[$id] = $context;
+    }
+
+    public function getLength()
+    {
+        return count($this->pool);
     }
 }

@@ -103,8 +103,8 @@ class Dao
     {
         $result = $this->fetchArray($where, $fields, $orderBy, 1);
 
-        var_dump($result);
-        var_dump(new $this->entity($result[0]));
+//        var_dump($result);
+//        var_dump(new $this->entity($result[0]));
         if (!empty($result[0])) {
             return new $this->entity($result[0]);
         }

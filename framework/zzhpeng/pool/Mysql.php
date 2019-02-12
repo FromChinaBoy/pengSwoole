@@ -76,7 +76,7 @@ class Mysql
     public function get()
     {
         $mysql = $this->pool->pop($this->config['pool_get_timeout']);
-        var_dump($mysql);
+//        var_dump($mysql);
         if (false === $mysql) {
             throw new \Exception("get mysql timeout, all mysql connection is used");
         }

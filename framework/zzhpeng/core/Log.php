@@ -8,7 +8,7 @@
 
 namespace zzhpeng\core;
 
-use framework\zzhpeng\Zzhpeng;
+use \zzhpeng\Zzhpeng;
 use SeasLog;
 
 class Log

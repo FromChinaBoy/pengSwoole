@@ -20,6 +20,6 @@ class User extends Entity
 
     //以下对应的数据库字段名
     public $id;
-    public $name;
+    public $user_name;
     public $password;
 }

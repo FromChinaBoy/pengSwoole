@@ -8,7 +8,6 @@
 namespace controller;
 
 use zzhpeng\mvc\Controller;
-use zzhpeng\pool\Context;
 use service\User as UserService;
 
 class Index extends Controller
@@ -16,7 +15,10 @@ class Index extends Controller
     public function index()
     {
         //通过context拿到$request, 再也不用担收数据错乱了
-        return 'i am family by route' . $this->request->get['id'];
+        return $this->template->render('index.twig', [
+            'name' => 'tong'
+        ]);
+//        return 'i am family by route' . $this->request->getQueryParams()['uid'];
     }
 
     public function tong()
@@ -57,8 +59,8 @@ class Index extends Controller
     public function add()
     {
         $array = [
-            'name' => $this->request->get['name'],
-            'password' => $this->request->get['password'],
+            'user_name' => $this->request->getQueryParams()['name'],
+            'password' =>$this->request->getQueryParams()['password'],
         ];
 
         return UserService::getInstance()->add($array);

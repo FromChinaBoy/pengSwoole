@@ -7,7 +7,7 @@
  */
 namespace zzhpeng\core;
 
-use framework\zzhpeng\Zzhpeng;
+use \zzhpeng\Zzhpeng;
 
 class Config
 {
