@@ -3,7 +3,7 @@
 
 use Phinx\Migration\AbstractMigration;
 
-class MyFirstMigration extends AbstractMigration
+class File extends AbstractMigration
 {
     /**
      * Change Method.
@@ -32,9 +32,15 @@ class MyFirstMigration extends AbstractMigration
      */
     public function change()
     {
-        $table = $this->table('user_logins');
-        $table->addColumn('user_id', 'integer')
-            ->addColumn('created', 'datetime')
+        $table = $this->table('file', ['engine' => 'MyISAM','comment'=>'文件']);
+        $table->addColumn('catalog_id','integer',['limit' => 11,'comment'=>'目录id','default'=>0])
+            ->addColumn('url','string',['limit' => 255])
+            ->addColumn('host','string',['limit' => 255])
+            ->addColumn('path','string',['limit' => 255])
+            ->addColumn('user_id','integer',['limit' => 11,'comment'=>'用户id'])
+            ->addColumn('created_time', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
+            ->addColumn('update_time', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
+            ->addColumn('delete_time', 'timestamp', ['default' => NULL,'null'=>true])
             ->create();
     }
 }

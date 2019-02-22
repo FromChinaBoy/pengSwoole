@@ -12,7 +12,7 @@ class User extends Entity
     /**
      * 对应的数据库表名
      */
-    const TABLE_NAME = 'users';
+    const TABLE_NAME = 'user';
     /**
      * 主键字段名
      */

@@ -7,7 +7,7 @@
  */
 namespace zzhpeng\db;
 
-use zzhpeng\Core\Log;
+use zzhpeng\core\Log;
 use Swoole\Coroutine\MySQL as SwMySql;
 class Mysql
 {

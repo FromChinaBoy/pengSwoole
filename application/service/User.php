@@ -25,12 +25,17 @@ class User
     }
 
     /**
-     * @return mixed
+     * @author: zzhpeng
+     * Date: 2019/2/22
+     * @param int $limit
+     * @param int $page
+     *
      * @desc 获取所有用户列表
+     * @return mixed
      */
-    public function getUserInfoList()
+    public function getUserInfoList($limit = 20,$page = 1)
     {
-        return UserDao::getInstance()->fetchAll();
+        return UserDao::getInstance()->paginate($limit,$page);
     }
 
     /**
@@ -65,4 +70,6 @@ class User
     {
         return UserDao::getInstance()->delete("id={$id}");
     }
+
+
 }

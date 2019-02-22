@@ -10,10 +10,11 @@ namespace controller;
 use zzhpeng\mvc\Controller;
 use service\User as UserService;
 
-class Index extends Controller
+class Index extends BaseController
 {
     public function index()
     {
+        var_dump($this->request->getRequestParam('id','sd'));
         //通过context拿到$request, 再也不用担收数据错乱了
         return $this->template->render('index.twig', [
             'name' => 'tong'
@@ -48,7 +49,7 @@ class Index extends Controller
     public function getlist()
     {
         $result = UserService::getInstance()->getUserInfoList();
-        return json_encode($result);
+        return $this->successResponse($result);
 
     }
 

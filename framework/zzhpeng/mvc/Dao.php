@@ -103,8 +103,6 @@ class Dao
     {
         $result = $this->fetchArray($where, $fields, $orderBy, 1);
 
-//        var_dump($result);
-//        var_dump(new $this->entity($result[0]));
         if (!empty($result[0])) {
             return new $this->entity($result[0]);
         }
@@ -137,10 +135,11 @@ class Dao
      * @param string $fields
      * @param null $orderBy
      * @param int $limit
+     * @param int $page
      * @return mixed
      * @desc 通过条件查询
      */
-    public function fetchArray($where = '1', $fields = '*', $orderBy = null, $limit = 0)
+    public function fetchArray($where = '1', $fields = '*', $orderBy = null, $limit = 0,$page = 1)
     {
         $query = "SELECT {$fields} FROM {$this->getLibName()} WHERE {$where}";
 
@@ -149,7 +148,8 @@ class Dao
         }
 
         if ($limit) {
-            $query .= " limit {$limit}";
+            $offset = ($page - 1) * $limit;
+            $query .= " limit {$offset},{$limit}";
         }
         return $this->db->query($query);
     }
@@ -215,5 +215,25 @@ class Dao
         $query = "DELETE FROM {$this->getLibName()} WHERE {$where}";
         $result = $this->db->query($query);
         return $result['affected_rows'];
+    }
+
+    /**
+     * 分页
+     * @author: zzhpeng
+     * Date: 2019/2/22
+     * @param $limit
+     * @param $page
+     *
+     * @return mixed
+     */
+    public function paginate(int $limit = 20,int  $page = 1){
+        $result = $this->fetchArray(1,'*',null,$limit,$page);
+        if (empty($result)) {
+            return $result;
+        }
+        foreach ($result as $index => $value) {
+            $result[$index] = new $this->entity($value);
+        }
+        return $result;
     }
 }
