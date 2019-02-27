@@ -14,7 +14,7 @@ class Config
     /**
      * @var 配置map
      */
-    public static $configMap;
+    public static $configMap = [];
 
     /**
      * @desc 读取配置，默认是application/config/default.php
@@ -22,7 +22,13 @@ class Config
     public static function load()
     {
         $configPath = Zzhpeng::$applicationPath . DS . 'config';
-        self::$configMap = require $configPath . DS . 'default.php';
+        //扫描文件夹
+        $file = scandir($configPath);
+        foreach ($file as $config){
+            if(pathinfo($config)['extension'] == 'php'){
+                self::$configMap = array_merge(self::$configMap,require $configPath . DS . $config);
+            }
+        }
     }
 
     /**
