@@ -10,18 +10,16 @@ namespace service;
 use zzhpeng\core\Singleton;
 use dao\User as UserDao;
 
-class User
+class User extends BaseService
 {
     use Singleton;
 
-    /**
-     * @param $id
-     * @return mixed
-     * @desc 通过uid查询用户信息
-     */
-    public function getUserInfoByUId($id)
+    protected $daoInstance;
+
+    public function __construct()
     {
-        return UserDao::getInstance()->fetchById($id);
+        $this->daoInstance = UserDao::getInstance();
+        parent::__construct();
     }
 
     /**
@@ -35,7 +33,7 @@ class User
      */
     public function getUserInfoList($limit = 20,$page = 1)
     {
-        return UserDao::getInstance()->paginate($limit,$page);
+        return $this->daoInstance->paginate($limit,$page);
     }
 
     /**
@@ -45,7 +43,7 @@ class User
      */
     public function add(array $array)
     {
-        return UserDao::getInstance()->add($array);
+        return $this->daoInstance->add($array);
     }
 
     /**
@@ -57,7 +55,7 @@ class User
      */
     public function updateById(array $array, $id)
     {
-        return UserDao::getInstance()->update($array, "id={$id}");
+        return $this->daoInstance->update($array, "id={$id}");
     }
 
     /**
@@ -68,7 +66,7 @@ class User
      */
     public function deleteById($id)
     {
-        return UserDao::getInstance()->delete("id={$id}");
+        return $this->daoInstance->delete("id={$id}");
     }
 
 

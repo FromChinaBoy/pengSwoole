@@ -14,7 +14,6 @@ class Index extends BaseController
 {
     public function index()
     {
-        var_dump($this->request->getRequestParam('id','sd'));
         //通过context拿到$request, 再也不用担收数据错乱了
         return $this->template->render('index.twig', [
             'name' => 'tong'
@@ -34,12 +33,16 @@ class Index extends BaseController
      */
     public function user()
     {
-        if (empty($this->request->get['uid'])) {
-            throw new \Exception("uid 不能为空 ");
+        try{
+            $uid = $this->request->getQueryParams()['uid'];
+            if (empty($this->request->getQueryParams()['uid'])) {
+                throw new \Exception("uid 不能为空 ");
+            }
+            $result = UserService::getInstance()->getInfoById($uid);
+            return $this->successResponse((array)$result);
+        }catch (\Exception $e){
+            return $this->failResponse($e->getMessage());
         }
-        $result = UserService::getInstance()->getUserInfoByUId($this->request->get['uid']);
-        return json_encode($result);
-
     }
 
     /**

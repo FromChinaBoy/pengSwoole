@@ -9,26 +9,22 @@
 namespace controller;
 
 
+use service\User;
+
 class Login
 {
 
-    /**
-     * @param array $arr
-     *
-     * @return array|bool|null|\PDOStatement|string|\think\Model
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    public function login($account, $password)
-    {
 
-        $admin = $this->where('account', '=', $account)->find();
-        if ($admin && $admin->password == md5($password)) {
+    public function login($phone, $password)
+    {
+        User::getInstance()->getUserInfoByUId($this->request->get['uid']);
+
+        $user = $this->where('phone', '=', $phone)->find();
+        if ($user && $user->password == md5($password)) {
             // 用户存在 修改登陆数据
             $updata = [
                 // 'last_login_ip' => request()->ip(),
-                'login_count' => $admin->login_count + 1
+                'login_count' => $user->login_count + 1
             ];
             $this->save($updata, ['id' => $admin->id]);
 
