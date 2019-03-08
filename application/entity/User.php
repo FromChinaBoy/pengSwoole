@@ -20,6 +20,16 @@ class User extends Entity
 
     //以下对应的数据库字段名
     public $id;
-    public $user_name;
+    public $phone;
     public $password;
+    public $nickname;
+    public $avatar;
+    public $sex;
+    public $login_count;
+    public $created_time;
+    public $update_time;
+    public $delete_time;
+    public $birthday;
+    public $last_login_ip;
+    public $token;
 }

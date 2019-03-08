@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <link href="STATIC/reset.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="wraper">
+    <div class="header">
+        <ul class="float-left">
+            <li class="special-header-item">小鹏图床</li>
+            <li class="header-item header-item-active">首页</li>
+            <li class="header-item">我的上传</li>
+            <li class="header-item">Chrome插件</li>
+        </ul>
+        <ul class="float-right">
+            <li class="">七牛云</li>
+            <li class="">注册</li>
+            <li class="">登录</li>
+            <li class="">设置</li>
+        </ul>
+    </div>
+    <div class="content">
+        <form class="content-item content-form" method="post" action="http://up.qiniu.com" enctype="multipart/form-data" id="upload_form">
+            <input name="token" type="hidden" value="z11BK6obMDLe6yqxHTmBcO5ZZCChj_-Np7tEScbw:qysPU4ZyPhp0VvHY82O_jH3dsF8=:eyJyZXR1cm5Cb2R5Ijoie1wia2V5XCI6XCJodHRwOlwvXC83eG55N20uY29tMS56MC5nbGIuY2xvdWRkbi5jb21cLyQoa2V5KVwiLFwiaGFzaFwiOlwiJChldGFnKVwiLFwiZnNpemVcIjokKGZzaXplKSxcImJ1Y2tldFwiOlwiJChidWNrZXQpXCIsXCJuYW1lXCI6XCIkKHg6bmFtZSlcIn0iLCJzY29wZSI6ImpvdXJuYWwiLCJkZWFkbGluZSI6MTUzNDQwODA2MH0=">
+            <input name="file" type="file" id="file"/>
+            <input class='submit-btn' type="button" value="上传" id="form_submit"/>
+        </form>
+        <div class="content-item content-nav">
+            <img class="view-img" src="" alt="" id="view_img">
+        </div>
+        <div class="content-item content-nav" id="view_url">
+        </div>
+    </div>
+</div>
+
+</body>
+<script>
+    //点击变色
+    $('.header-item').click(function(){
+        $('.header-item-active').removeAttr('class','header-item-active')
+        $(this).attr('class','header-item-active')
+    });
+
+    //获取七牛上传凭证token
+    $.ajax({
+        type: "GET",
+        url: "{:url('/api/v1/upload/getToken')}",
+        dataType: 'json',
+        success: function(data){
+            if(data.errorCode == 0){
+                $("input[name='token']").val(data.data.token)
+            }
+        }
+    });
+
+    //点击上传文件
+    $("#form_submit").click(function(){
+
+        var fileLength = $("#file")[0].files.length;
+        if(fileLength == 0){
+            alert('请先上传！')
+            return;
+        }
+
+        var fileSize =  $("#file")[0].files[0].size;
+        if(fileSize > 1024000){
+            alert('文件大于1M,请压缩')
+            return;
+        }
+
+        console.log($('#upload_form').serialize())
+        $.ajax({
+            url: "http://up.qiniu.com",
+            type: 'POST',
+            data: new FormData($('#upload_form')[0]),
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data){
+                console.log(data)
+                $('#view_img').attr('src',data.key)
+                $('#view_url').html(data.key)
+            }
+        });
+    });
+</script>
+<style>
+    li{
+        list-style:none;
+    }
+    .header{
+        height: 50px;
+        background-color: #25a4bb;
+
+    }
+    .float-left li{
+        float:left;
+        padding:0 10px 0 15px;
+        line-height: 50px;
+    }
+    .float-right li{
+        float:right;
+        padding:0 10px 0 15px;
+        line-height: 50px;
+    }
+    .special-header-item{
+        font-size:20px;
+    }
+    .header ul li{
+        cursor:pointer;
+        color: #ffffff;
+    }
+    .header ul li:hover{
+        background-color: #428888;
+    }
+    .header-item-active{
+        background-color: #428888;
+    }
+
+    /*内容*/
+    .content{
+        width: 1000px;
+        margin: 0 auto;
+    }
+
+    .content .content-item{
+        width: 70%;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .content .content-form{
+        height: 200px;
+        background-color: #EEEEEE;
+    }
+
+    .content .content-nav{
+        margin-top: 10px;
+    }
+    .view-img{
+        width: 100%;
+    }
+    .content-form .submit-btn {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-bottom: 0;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        background-image: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+</style>
+</html>

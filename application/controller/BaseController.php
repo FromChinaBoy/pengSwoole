@@ -29,21 +29,6 @@ class BaseController extends Controller
 //        }
 //        parent::__construct($app);
 //    }
-
-    /**
-     * 重写ajax成功返回
-     * @author hihozhou
-     *
-     * @param array $data
-     *
-     * @return mixed
-     */
-    protected function successResponse(array $data = [])
-    {
-        return $this->ajaxSuccessResponse(['data' => $data]);
-    }
-
-
     /**
      * 接口的appId和appSecret验证
      * @author hihozhou

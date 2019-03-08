@@ -18,5 +18,9 @@ return [
         $r->post('/post', function () {
             return "must post method";
         });
+
+        //登录相关
+        $r->post('/auth', ['controller\Auth', 'login']);
+
     },
 ];

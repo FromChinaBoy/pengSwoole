@@ -54,6 +54,8 @@ class User extends AbstractMigration
             ->addColumn('avatar','string',['limit' => 255,'comment'=>'用户头像'])
             ->addColumn('sex','integer',['limit' => 2,'comment'=>'性别：0未知，1男性，2女性','default'=>0])
             ->addColumn('login_count','integer',['limit' => 11,'comment'=>'登录次数','default'=>0])
+            ->addColumn('last_login_ip','string',['limit' => 20,'comment'=>'ip','default'=>'127.0.0.1'])
+            ->addColumn('token','string',['limit' => 100,'comment'=>'ip','default' => NULL,'null'=>true])
             ->addColumn('created_time', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('update_time', 'timestamp', ['default' => 'CURRENT_TIMESTAMP'])
             ->addColumn('delete_time', 'timestamp', ['default' => NULL,'null'=>true])

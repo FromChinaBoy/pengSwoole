@@ -7,15 +7,13 @@
  */
 namespace controller;
 
-use zzhpeng\mvc\Controller;
 use service\User as UserService;
 
 class Index extends BaseController
 {
     public function index()
     {
-        //通过context拿到$request, 再也不用担收数据错乱了
-        return $this->template->render('index.twig', [
+        return $this->template->render('index/index.twig', [
             'name' => 'tong'
         ]);
 //        return 'i am family by route' . $this->request->getQueryParams()['uid'];
@@ -34,11 +32,11 @@ class Index extends BaseController
     public function user()
     {
         try{
-            $uid = $this->request->getQueryParams()['uid'];
-            if (empty($this->request->getQueryParams()['uid'])) {
+            $param = $this->request->getQueryParams('uid');
+            if (empty($param['uid'])) {
                 throw new \Exception("uid 不能为空 ");
             }
-            $result = UserService::getInstance()->getInfoById($uid);
+            $result = UserService::getInstance()->getInfoById($param['uid']);
             return $this->successResponse((array)$result);
         }catch (\Exception $e){
             return $this->failResponse($e->getMessage());

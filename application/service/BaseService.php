@@ -8,12 +8,17 @@
 
 namespace service;
 
+use zzhpeng\pool\Context;
+
 class BaseService
 {
     protected $daoInstance;
 
     public function __construct()
     {
+        $context = Context::getInstance()->get();
+        $this->request = $context->getRequest();
+        $this->respoense = $context->getResponse();
     }
     /**
      * @author: zzhpeng
@@ -39,5 +44,22 @@ class BaseService
     public function getInfoById($id)
     {
         return $this->daoInstance->fetchById($id);
+    }
+
+    /**
+     * @author: zzhpeng
+     * Date: 2019/3/8
+     * @param $length
+     *
+     * @return null|string
+     */
+    public static function getRandChar($length){
+        $str = null;
+        $strPol = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+        $max = strlen($strPol)-1;
+        for ($i=0;$i<$length;$i++){
+            $str .= $strPol[rand(0,$max)];
+        }
+        return $str;
     }
 }

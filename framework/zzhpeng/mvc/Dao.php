@@ -189,7 +189,7 @@ class Dao
         if (empty($where)) {
             throw new \Exception('update 必需有where条件限定');
         }
-        $strUpdateFields = '';
+        $strUpdateFields = "`update_time` = '" . date('Y-m-d H:i:s') . "',";
         foreach ($array as $key => $value) {
             $strUpdateFields .= "`{$key}` = '{$value}',";
         }

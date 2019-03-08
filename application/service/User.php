@@ -15,6 +15,7 @@ class User extends BaseService
     use Singleton;
 
     protected $daoInstance;
+    static $user_cookies_key = 'user_cookies_key';
 
     public function __construct()
     {

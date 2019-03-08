@@ -24,6 +24,7 @@ class Controller
         //通过context拿到$request, 再也不用担收数据错乱了
         $context = Context::getInstance()->get();
         $this->request = $context->getRequest();
+        $this->respoense = $context->getResponse();
         $this->template = Template::getInstance()->template;
     }
 }

@@ -11,27 +11,31 @@ namespace controller;
 
 use service\User;
 
-class Login
+class Login extends BaseController
 {
+    public function index(){
+        return $this->template->render('login/index.twig', [
+            'name' => 'tong'
+        ]);
+    }
 
-
-    public function login($phone, $password)
+    public function login()
     {
-        User::getInstance()->getUserInfoByUId($this->request->get['uid']);
-
-        $user = $this->where('phone', '=', $phone)->find();
-        if ($user && $user->password == md5($password)) {
-            // 用户存在 修改登陆数据
-            $updata = [
-                // 'last_login_ip' => request()->ip(),
-                'login_count' => $user->login_count + 1
-            ];
-            $this->save($updata, ['id' => $admin->id]);
-
-            // $re->last_login_ip = $updata['last_login_ip'];
-            $admin->login_count = $updata['login_count'];
-            return $admin;
-        }
+        $param = $this->request->getQueryParams('phone,password');
+        $user = User::getInstance()->getInfo('phone = '.$param['phone']);
+        var_dump($user);
+//        if ($user && $user->password == md5($password)) {
+//            // 用户存在 修改登陆数据
+//            $updata = [
+//                // 'last_login_ip' => request()->ip(),
+//                'login_count' => $user->login_count + 1
+//            ];
+//            $this->save($updata, ['id' => $admin->id]);
+//
+//            // $re->last_login_ip = $updata['last_login_ip'];
+//            $admin->login_count = $updata['login_count'];
+//            return $admin;
+//        }
         return false;
     }
 
